@@ -12,8 +12,10 @@ class Deck
     @cards.shuffle!
   end
 
-  # Returns a random card since the cards are shuffled
+  # Returns a random card
   def draw_card
-    cards.pop
+    suit = Card::SUITS.sample
+    rank = Card::RANKS.sample
+    Card.new(suit: suit, rank: rank)
   end
 end

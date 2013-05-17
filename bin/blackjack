@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH << './lib'
+
+require 'blackjack'
+
+ui = UI.new
+ui.run
