@@ -2,10 +2,11 @@ class GameController
   attr_reader   :blackjack
   attr_accessor :exit_application
 
-  def initialize(args)
+  def initialize(*args)
     args.each do |k,v|
       instance_variable_set("@#{k}", v) unless v.nil?
     end
+    @blackjack = Blackjack.new
   end
 
   def exit_application?

@@ -1,9 +1,8 @@
 class UI
-  attr_reader :blackjack, :game_controller
+  attr_reader :game_controller
 
   def initialize(*args)
-    @blackjack       = Blackjack.new
-    @game_controller = GameController.new(blackjack: @blackjack)
+    @game_controller = GameController.new
   end
 
   def run

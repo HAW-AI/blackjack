@@ -4,7 +4,7 @@ class Blackjack
   GAME_STATES = [:pre_game, :betting, :in_game, :end_of_round]
 
   def initialize(*args)
-    @dealer       = Dealer.new(name: "Dealer")
+    @dealer       = Dealer.new
     @players      = CircularList.new
     @state        = :pre_game
   end
