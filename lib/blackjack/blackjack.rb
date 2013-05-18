@@ -20,23 +20,24 @@ class Blackjack
     return false unless state == :in_game
 
     new_card = deck.draw_card
-    table.user_gets_card(current_player, new_card)
+    table.player_gets_card(current_player, new_card)
     next_player
     if round_finished?
       end_of_round
     end
+    puts table.to_s
     new_card
-    nil
   end
 
   # user doesnt take another card
   def stay
     return false unless state == :in_game
 
-    current_player.finished?
+    current_player.finish
     if round_finished?
       end_of_round
     end
+    puts table.to_s
     next_player
     nil
   end
@@ -60,9 +61,9 @@ class Blackjack
     players.current
   end
 
-  def cards_of_user(user)
+  def cards_of_player(user)
     # return an array of the cards a player/dealer has gotten so far
-    table.cards_of_user(user)
+    table.cards_of_player(user)
   end
 
   def round_finished?
@@ -74,7 +75,8 @@ class Blackjack
   end
 
   def betting
-    if state == :in_game || state == :pre_game || state == :end_of_round
+    if (state == :in_game || state == :pre_game || state == :end_of_round) &&
+       players.size > 0
       @state = :betting
       new_round
       true
@@ -92,6 +94,8 @@ class Blackjack
   def new_round
     @table = Table.new
     @deck  = Deck.new
+
+    table.player_gets_card(dealer, deck.draw_card)
   end
 
   ### Handling of game states
@@ -117,9 +121,31 @@ class Blackjack
   def end_of_round
     if state == :in_game
       @state = :end_of_round
+      # award some money to those that won. just the dealer basically
+      dealer_draws_cards
+
+      print_results
       true
     else
       false
+    end
+  end
+
+  # At the end of a round a dealer draws cards to bet against what's
+  # already on the table
+  def dealer_draws_cards
+    begin
+      table.player_gets_card(dealer, deck.draw_card_that_beats(table.highest_card_combo_value))
+    end until table.dealer_has_won? || table.blackjack?(dealer)
+  end
+
+  def print_results
+    if table.dealer_has_won?
+      puts "The dealer wins with a hand value of #{table.value_of_players_cards(dealer)}."
+    elsif table.blackjack?(dealer)
+      puts "The dealer wins with a blackjack."
+    else
+      puts "Some user beat the house. WTF?!"
     end
   end
 end

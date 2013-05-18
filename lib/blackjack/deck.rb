@@ -18,4 +18,21 @@ class Deck
     rank = Card::RANKS.sample
     Card.new(suit: suit, rank: rank)
   end
+
+  def draw_card_that_beats(value)
+    if value > 11
+      # if the value is higher than 11 we will have to draw again anyway
+      draw_card
+    else
+      suit = Card::SUITS.sample
+      if value == 11
+        rank = "A"
+      elsif value == 10
+        rank = %w(10 J Q K).sample
+      else
+        rank = %w{ 2 3 4 5 6 7 8 9 }.sample
+      end
+      Card.new(suit: suit, rank: rank)
+    end
+  end
 end

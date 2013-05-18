@@ -12,6 +12,14 @@ class Card
     end
   end
 
+  def value
+    if rank.to_i > 0
+      rank.to_i
+    else
+      rank == "A" ? 11 : 10
+    end
+  end
+
   def to_s
     "#{@suit} - #{@rank}"
   end

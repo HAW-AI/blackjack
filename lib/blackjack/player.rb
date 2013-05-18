@@ -1,5 +1,6 @@
 class Player
-  attr_reader :name, :money
+  attr_reader   :name, :id
+  attr_accessor :money
 
   def initialize(args)
     args.each do |k,v|
@@ -8,6 +9,7 @@ class Player
 
     @finished = false
     @money    ||= 5000
+    @id       = SecureRandom.random_number(1000000000)
   end
 
   def finish
@@ -22,9 +24,10 @@ class Player
   def withdraw_from_money(amount)
     amount = amount.abs
     if amount >= Table::MINIMUM_BET && (money - amount) >= 0
-      money -= amount
+      self.money = money - amount
       true
     else
+      puts "The minimum bet at this table is #{Table::MINIMUM_BET}."
       false
     end
   end
@@ -40,5 +43,9 @@ class Player
 
   def to_s
     name.to_s
+  end
+
+  def hash
+    id
   end
 end

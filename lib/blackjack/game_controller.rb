@@ -6,7 +6,8 @@ class GameController
     args.each do |k,v|
       instance_variable_set("@#{k}", v) unless v.nil?
     end
-    @blackjack = Blackjack.new
+    @blackjack        = Blackjack.new
+    @exit_application = false
   end
 
   def exit_application?
@@ -33,8 +34,11 @@ class GameController
       blackjack.add_player(username)
       puts "User '#{username}' was added to the game"
     elsif input_string.include?("start")
-      puts "Starting a game of blackjack."
-      blackjack.betting
+      if blackjack.betting
+        puts "Starting a game of blackjack."
+      else
+        puts "Cannot start a game without any players."
+      end
     end
   end
 
@@ -67,15 +71,12 @@ class GameController
 
   end
 
-  def handle_post_game_input(input_string)
-    
-  end
-
   def round_results
     "foobar"
   end
 
   def print_instructions
+    print "\n"
     if blackjack.state == :pre_game
       puts "Enter the name of the next player like 'player: somename' or write 'start' to start the game"
       print ">> "
@@ -89,12 +90,11 @@ class GameController
       puts "The round ended. To start a new round press n"
       print ">> "
     else
-
+      #
     end
-
   end
 
   def user_prompt
-    "#{blackjack.current_player}>> "
+    "#{blackjack.current_player} >> "
   end
 end

@@ -1,3 +1,4 @@
+require 'securerandom'
 require 'blackjack/card'
 require 'blackjack/circular_list'
 require 'blackjack/deck'
