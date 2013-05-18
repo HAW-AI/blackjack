@@ -18,16 +18,8 @@ class GameController
       puts "Please enter something."
     elsif input_string == "exit"
       exit_application = true
-    elsif blackjack.state == :pre_game
-      handle_pre_game_input(input_string)
-    elsif blackjack.state == :betting
-      handle_betting_input(input_string)
-    elsif blackjack.state == :in_game
-      handle_in_game_input(input_string)
-    elsif blackjack.state == :end_of_round
-      handle_end_of_round_input(input_string)
     else
-      handle_post_game_input(input_string)
+      send "handle_#{blackjack.state.to_s}_input".to_sym, input_string
     end
 
     print_instructions
