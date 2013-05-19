@@ -24,9 +24,7 @@ class Card
     "#{@suit} - #{@rank}"
   end
 
-  # FIXME not correct yet. 10 and facecards are equal in value and an ace
-  #       is worth 11
   def <=>(other)
-    rank <=> other.rank
+    value <=> other.value
   end
 end
