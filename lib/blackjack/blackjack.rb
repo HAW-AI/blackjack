@@ -20,7 +20,7 @@ class Blackjack
     return false unless state == :in_game
 
     new_card = deck.draw_card
-    table.player_gets_card(current_player, new_card)
+    current_player.receive_card(new_card)
     next_player
     if round_finished?
       end_of_round
@@ -45,15 +45,14 @@ class Blackjack
   def bet(amount)
     return false unless state == :betting
 
-    result = table.player_bets(current_player, amount)
-    if result
+    if current_player.bets(amount)
       next_player
       if all_bets_are_in?
         in_game
       end
-      result
+      true
     else
-      result
+      false
     end
   end
 
@@ -61,17 +60,12 @@ class Blackjack
     players.current
   end
 
-  def cards_of_player(user)
-    # return an array of the cards a player/dealer has gotten so far
-    table.cards_of_player(user)
-  end
-
   def round_finished?
-    players.all? {|player| player.finished?}
+    players.all? {|player| player.finished? }
   end
 
   def all_bets_are_in?
-    table.bets.keys.size == players.size
+    players.all? {|player| player.placed_a_bet? }
   end
 
   def betting
@@ -95,7 +89,12 @@ class Blackjack
     @table = Table.new
     @deck  = Deck.new
 
-    table.player_gets_card(dealer, deck.draw_card)
+    players.each do |player|
+      player.new_round
+      @table.add_player(player)
+    end
+    table.dealer = dealer
+    dealer.receive_card(deck.draw_card)
   end
 
   ### Handling of game states
@@ -135,8 +134,10 @@ class Blackjack
   # already on the table
   def dealer_draws_cards
     begin
-      table.player_gets_card(dealer, deck.draw_card_that_beats(table.highest_card_combo_value))
-    end until table.dealer_has_won? || table.blackjack?(dealer)
+      if table.highest_non_bust_hand_value
+        dealer.receive_card(deck.draw_card_that_beats(table.highest_non_bust_hand_value))
+      end
+    end until dealer.has_won?
   end
 
   def print_results
