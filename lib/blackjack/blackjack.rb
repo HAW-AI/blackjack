@@ -133,18 +133,18 @@ class Blackjack
   # At the end of a round a dealer draws cards to bet against what's
   # already on the table
   def dealer_draws_cards
-    begin
-      if table.highest_non_bust_hand_value
-        dealer.receive_card(deck.draw_card_that_beats(table.highest_non_bust_hand_value))
-      end
-    end until dealer.has_won?
+    if table.highest_non_bust_hand_value
+      dealer.receive_card(deck.draw_card)
+      dealer.receive_card(deck.draw_card)
+      # dealer.receive_card(deck.draw_card_that_beats(table.highest_non_bust_hand_value))
+    end
   end
 
   def print_results
-    if table.dealer_has_won?
-      puts "The dealer wins with a hand value of #{table.value_of_players_cards(dealer)}."
-    elsif table.blackjack?(dealer)
+    if dealer.hand.blackjack?
       puts "The dealer wins with a blackjack."
+    elsif dealer.has_won?
+      puts "The dealer wins with a hand value of #{dealer.hand.value}."
     else
       puts "Some user beat the house. WTF?!"
     end
