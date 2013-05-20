@@ -93,6 +93,7 @@ class Blackjack
       player.new_round
       @table.add_player(player)
     end
+    dealer.new_round
     table.dealer = dealer
     dealer.receive_card(deck.draw_card)
   end
@@ -134,7 +135,6 @@ class Blackjack
   # already on the table
   def dealer_draws_cards
     if table.highest_non_bust_hand_value
-      dealer.receive_card(deck.draw_card)
       dealer.receive_card(deck.draw_card)
       # dealer.receive_card(deck.draw_card_that_beats(table.highest_non_bust_hand_value))
     end

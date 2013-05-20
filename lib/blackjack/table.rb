@@ -7,6 +7,10 @@ class Table
     @players = []
   end
 
+  def players_and_dealer
+    @players + [@dealer]
+  end
+
   # returns an integer or nil if non exists
   def highest_non_bust_hand_value
     hands.select {|hand| !hand.bust? }.map {|hand| hand.value }.max
@@ -14,7 +18,7 @@ class Table
 
   def to_s
     result = ""
-    players.each do |player|
+    players_and_dealer.each do |player|
       result += player.to_s
       result += player.hand.to_s
     end
@@ -34,6 +38,6 @@ class Table
   end
 
   def hands
-    players.map {|player| player.hand }
+    players_and_dealer.map {|player| player.hand }
   end
 end

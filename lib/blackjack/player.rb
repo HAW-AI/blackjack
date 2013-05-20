@@ -70,6 +70,7 @@ class Player
   def new_round
     hand.clear
     @bet = nil
+    @finished = false
   end
 
   def to_s
