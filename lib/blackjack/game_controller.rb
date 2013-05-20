@@ -18,7 +18,7 @@ class GameController
     if input_string.nil? || input_string.empty?
       puts "Please enter something."
     elsif input_string == "exit"
-      exit_application = true
+      self.exit_application = true
     else
       send "handle_#{blackjack.state.to_s}_input".to_sym, input_string
     end
