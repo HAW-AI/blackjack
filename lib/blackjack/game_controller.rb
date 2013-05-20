@@ -29,16 +29,16 @@ class GameController
   private
 
   def handle_pre_game_input(input_string)
-    if input_string.include?("player:")
-      username = input_string.split(":")[1].chomp.strip
-      blackjack.add_player(username)
-      puts "User '#{username}' was added to the game"
-    elsif input_string.include?("start")
+    if input_string == "start"
       if blackjack.betting
         puts "Starting a game of blackjack."
       else
         puts "Cannot start a game without any players."
       end
+    else
+      username = input_string
+      blackjack.add_player(username)
+      puts "User '#{username}' was added to the game"
     end
   end
 
@@ -78,7 +78,7 @@ class GameController
   def print_instructions
     print "\n"
     if blackjack.state == :pre_game
-      puts "Enter the name of the next player like 'player: somename' or write 'start' to start the game"
+      puts "Enter the name of the next player like 'somename' or write 'start' to start the game"
       print ">> "
     elsif blackjack.state == :betting
       puts "#{blackjack.current_player}, please bet an amount within your available money of #{blackjack.current_player.money} cents."

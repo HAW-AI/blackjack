@@ -7,7 +7,7 @@ class UI
 
   def run
     puts "Welcome to the blackjack table!"
-    puts "Enter the name of the player like 'player: somename'"
+    puts "Enter player name"
     print ">> "
 
     loop do
