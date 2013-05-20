@@ -134,10 +134,11 @@ class Blackjack
   # At the end of a round a dealer draws cards to bet against what's
   # already on the table
   def dealer_draws_cards
-    if table.highest_non_bust_hand_value
-      dealer.receive_card(deck.draw_card)
-      # dealer.receive_card(deck.draw_card_that_beats(table.highest_non_bust_hand_value))
-    end
+    initial_card = dealer.hand.cards.first
+    highest_value = table.highest_non_bust_hand_value
+    cards = deck.draw_cards_that_beat(highest_value)
+
+    cards.each { |c| dealer.receive_card(c) }
   end
 
   def print_results

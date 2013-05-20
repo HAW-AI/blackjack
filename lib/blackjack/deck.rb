@@ -19,10 +19,11 @@ class Deck
     Card.new(suit: suit, rank: rank)
   end
 
-  def draw_card_that_beats(value)
+  # be smart
+  def draw_cards_that_beat(value)
     if value > 11
       # if the value is higher than 11 we will have to draw again anyway
-      draw_card
+      [draw_card]
     else
       suit = Card::SUITS.sample
       if value == 11
@@ -32,7 +33,7 @@ class Deck
       else
         rank = %w{ 2 3 4 5 6 7 8 9 }.sample
       end
-      Card.new(suit: suit, rank: rank)
+      [Card.new(suit: suit, rank: rank)]
     end
   end
 end
