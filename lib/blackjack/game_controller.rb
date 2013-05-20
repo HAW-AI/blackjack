@@ -28,10 +28,15 @@ class GameController
 
   private
 
+  def auto_bet
+    blackjack.bet(50)
+  end
+
   def handle_pre_game_input(input_string)
     if input_string == "start"
       if blackjack.betting
         puts "Starting a game of blackjack."
+        auto_bet
       else
         puts "Cannot start a game without any players."
       end
@@ -65,6 +70,7 @@ class GameController
     if input_string == "n" || input_string == "new" || input_string == "new round"
       puts "Starting a new round."
       blackjack.betting
+      auto_bet
     else
       #
     end
