@@ -112,6 +112,10 @@ class Blackjack
   def in_game
     if state == :betting
       @state = :in_game
+
+      players.each { |p| 2.times { p.receive_card(deck.draw_card) } }
+      puts table.to_s
+
       true
     else
       false
