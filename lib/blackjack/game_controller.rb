@@ -36,7 +36,7 @@ class GameController
     if input_string == "start"
       if blackjack.betting
         puts "Starting a game of blackjack."
-        auto_bet
+        blackjack.players.length.times { auto_bet }
       else
         puts "Cannot start a game without any players."
       end
