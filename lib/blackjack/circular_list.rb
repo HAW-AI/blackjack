@@ -2,7 +2,7 @@
 class CircularList < Array
   def index
     @index ||=0
-    @index.abs 
+    @index.abs
   end
 
   def current
@@ -20,6 +20,10 @@ class CircularList < Array
     @index ||= 0
     @index -= num
     get_at(@index)
+  end
+
+  def reset
+    @index = 0
   end
 
   private

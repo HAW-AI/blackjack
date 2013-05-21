@@ -21,9 +21,10 @@ class Blackjack
 
     new_card = deck.draw_card
     current_player.receive_card(new_card)
-    next_player
     if round_finished?
       end_of_round
+    else
+      next_player
     end
     puts table.to_s
     new_card
@@ -36,9 +37,10 @@ class Blackjack
     current_player.finish
     if round_finished?
       end_of_round
+    else
+      next_player
     end
     puts table.to_s
-    next_player
     nil
   end
 
@@ -82,12 +84,18 @@ class Blackjack
   private
 
   def next_player
-    players.next
+    begin
+      players.next
+    end until not current_player.finished?
+
+    current_player
   end
 
   def new_round
     @table = Table.new
     @deck  = Deck.new
+
+    players.reset
 
     players.each do |player|
       player.new_round
