@@ -21,27 +21,44 @@ class Deck
 
   # be smart
   def draw_cards_that_beat(start_value, target_value)
-    cards = []
-
-    begin
-      cards << draw_card
-    end while (start_value + cards.map(&:value).inject(0, :+) < 17)
-
-    cards
-
-    # if target_value > 11
-    #   # if the target_value is higher than 11 we will have to draw again anyway
-    #   [draw_card]
-    # else
-    #   suit = Card::SUITS.sample
-    #   if target_value == 11
-    #     rank = "A"
-    #   elsif target_value == 10
-    #     rank = %w(10 J Q K).sample
-    #   else
-    #     rank = %w{ 2 3 4 5 6 7 8 9 }.sample
-    #   end
-    #   [Card.new(suit: suit, rank: rank)]
-    # end
+    breadth_first_search(start_value, target_value)
   end
+
+private
+
+  def cards
+    Card::SUITS.map do |suit|
+      Card::RANKS.map do |rank|
+        Card.new(suit: suit, rank: rank)
+      end
+    end.flatten
+  end
+
+  def path_from_record(record)
+    if record[:parent].nil?
+      [record[:card]]
+    else
+      path_from_record(record[:parent]) + [record[:card]]
+    end
+  end
+
+  def breadth_first_search(start_value, target_value)
+    open_list = cards.map { |c| { parent: nil, card: c, sum: start_value + c.value } }
+
+    while not open_list.empty?
+      new_open_list = []
+
+      open_list.each do |record|
+        if record[:sum] >= target_value && record[:sum] <= 21
+          return path_from_record(record)
+        elsif record[:sum] < 17 # only allowed to take cards while under 17
+          new_cards = cards.map { |c| { parent: record, card: c, sum: record[:sum] + c.value } }
+          new_open_list = new_open_list + new_cards
+        end
+      end
+
+      open_list = new_open_list
+    end
+  end
+
 end
