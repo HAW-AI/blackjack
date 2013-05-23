@@ -15,7 +15,11 @@ class Hand
   end
 
   def value
-    cards.inject(0) {|sum, card| sum + card.value }
+    if cards.length == 2 && cards.all? { |c| c.rank == "A" } # two aces
+      21
+    else
+      cards.inject(0) {|sum, card| sum + card.value }
+    end
   end
 
   def bust?
