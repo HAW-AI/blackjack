@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH << './lib'
+
+require 'blackjack'
+
+hand = Hand.new
+hand << Card.new(suit: :clubs, rank: "A")
+hand << Card.new(suit: :diamonds, rank: "A")
+puts "Value of two aces: " + hand.value.to_s
+
+
+deck = Deck.new
+initial_value = 0
+target_value = 18
+cards = deck.draw_cards_that_beat(initial_value, target_value)
+
+puts "initial value: " + initial_value.to_s
+puts "target value: " + target_value.to_s
+puts "drawn value: " + (initial_value + cards.map(&:value).inject(0, :+)).to_s
+
+puts cards.map(&:to_s)
+
+
+
+deck = Deck.new
+initial_value = 0
+target_value = 18
+cards = deck.draw_cards_that_beat_with_a_star(initial_value, target_value)
+
+puts "initial value: " + initial_value.to_s
+puts "target value: " + target_value.to_s
+puts "drawn value: " + (initial_value + cards.map(&:value).inject(0, :+)).to_s
+
+puts cards.map(&:to_s)
