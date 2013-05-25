@@ -2,7 +2,8 @@ class Card
   include Comparable
 
   SUITS = [:clubs, :diamonds, :hearts, :spades]
-  RANKS = %w{ 2 3 4 5 6 7 8 9 10 J Q K A}
+  # RANKS = %w{ 2 3 4 5 6 7 8 9 10 J Q K A}
+  RANKS = %w{ 2 3 5}
 
   attr_reader :suit, :rank
 
