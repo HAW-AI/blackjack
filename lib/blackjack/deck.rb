@@ -74,53 +74,42 @@ private
       { parent: nil, card: card, sum: start_value + card.value, f: 0, g: 0, h: 0 }
     end
 
-    # no closed list, because we can only move 'forward' (no negative card values)
     closed_list = []
+    path = []
 
-    while not open_list.empty?
-      record = open_list.first
-      open_list = open_list.drop(1)
-      closed_list << record
+    until open_list.empty? || !path.empty?
+      record = open_list.min_by { |r| r[:f] }
+      open_list = open_list - [record]
+      closed_list = closed_list + [record]
 
-      if record[:sum] >= target_value && record[:sum] <= 21
-        return path_from_record(record)
+      if record[:sum] == target_value
+        path = path_from_record(record)
       elsif record[:sum] < 17 # only allowed to take cards while under 17
         cards.select do |card| # only walkable nodes
           sum = record[:sum] + card.value
-          sum <= 21 && (not closed_list.include?(sum))
+          sum <= 21 && (not closed_list.any? { |r| r[:sum] == sum })
         end.each do |card|
-          existing_index = open_list.index { |r| r[:sum] == record[:sum] + card.value }
-          existing_record = if existing_index.nil? then nil else open_list[existing_index] end
+          sum = record[:sum] + card.value
+
+          existing_record = open_list.find { |r| r[:sum] == sum }
 
           g_value = record[:g] + 1
           h_value = h.call(card.value)
           f_value = g_value + h_value
 
-          if existing_record.nil?
-            new_record = {
-              parent: record,
-              card: card,
-              sum: record[:sum] + card.value,
-              f: f_value,
-              g: g_value,
-              h: h_value
-            }
+          new_record = { parent: record, card: card, sum: sum, f: f_value, g: g_value, h: h_value }
 
-            open_list << new_record
+          if existing_record.nil?
+            open_list = open_list + [new_record]
           elsif g_value < existing_record[:g]
-            existing_record[:parent] = record
-            existing_record[:card] = card
-            existing_record[:f] = f_value
-            existing_record[:g] = g_value
-            existing_record[:h] = h_value
+            existing_record.merge!(new_record)
           end
         end
       end
 
-      open_list.sort_by! { |r| r[:f] }
     end
 
-    []
+    path
   end
 
 end
