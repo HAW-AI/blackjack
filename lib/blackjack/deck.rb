@@ -71,7 +71,9 @@ private
     h = lambda { |v| ((target_value - v) / highest_card_value).ceil }
 
     open_list = cards.map do |card|
-      { parent: nil, card: card, sum: start_value + card.value, f: 0, g: 0, h: 0 }
+      sum = start_value + card.value
+      h_value = h.call(sum)
+      { parent: nil, card: card, sum: sum, f: h_value + 1, g: 1, h: h_value }
     end
 
     closed_list = []
@@ -80,21 +82,21 @@ private
     until open_list.empty? || !path.empty?
       record = open_list.min_by { |r| r[:f] }
       open_list = open_list - [record]
-      closed_list = closed_list + [record]
+      closed_list = closed_list + [record[:sum]]
 
       if record[:sum] == target_value
         path = path_from_record(record)
       elsif record[:sum] < 17 # only allowed to take cards while under 17
         cards.select do |card| # only walkable nodes
           sum = record[:sum] + card.value
-          sum <= 21 && (not closed_list.any? { |r| r[:sum] == sum })
+          sum <= 21 && !closed_list.include?(sum)
         end.each do |card|
           sum = record[:sum] + card.value
 
           existing_record = open_list.find { |r| r[:sum] == sum }
 
           g_value = record[:g] + 1
-          h_value = h.call(card.value)
+          h_value = h.call(sum)
           f_value = g_value + h_value
 
           new_record = { parent: record, card: card, sum: sum, f: f_value, g: g_value, h: h_value }
