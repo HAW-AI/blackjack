@@ -35,15 +35,15 @@ class Deck
     @cards.shuffle!
   end
 
-  def generate_a_deck
-    Card::SUITS.cycle(1) do |suit|
-      Card::RANKS.cycle(1) do |rank|
-        @cards << Card.new(suit: suit, rank: rank)
-      end
-    end
-  end
+  # def generate_a_deck
+  #   Card::SUITS.cycle(1) do |suit|
+  #     Card::RANKS.cycle(1) do |rank|
+  #       @cards << Card.new(suit: suit, rank: rank)
+  #     end
+  #   end
+  # end
 
-  def cards
+  def generate_a_deck
     Card::SUITS.map do |suit|
       Card::RANKS.map do |rank|
         Card.new(suit: suit, rank: rank)
@@ -83,10 +83,14 @@ class Deck
     highest_card_value = cards.map(&:value).max
     h = lambda { |v| ((target_value - v) / highest_card_value).ceil }
 
+    card_counts = Hash[cards.group_by { |c| c }.map { |c, cs| [c, cs.length] }]
+
     open_list = cards.map do |card|
       sum = start_value + card.value
       h_value = h.call(sum)
-      { parent: nil, card: card, sum: sum, f: h_value + 1, g: 1, h: h_value }
+      counts = Hash.new(0) # card counts along the path
+      counts[card] += 1
+      { parent: nil, card: card, sum: sum, f: h_value + 1, g: 1, h: h_value, counts: counts }
     end
 
     closed_list = []
@@ -101,10 +105,13 @@ class Deck
         path = path_from_record(record)
       elsif record[:sum] < 17 # only allowed to take cards while under 17
         cards.select do |card| # only walkable nodes
+          is_card_drawable = card_counts[card] > record[:counts][card]
           sum = record[:sum] + card.value
-          sum <= 21 && !closed_list.include?(sum)
+          sum <= 21 && !closed_list.include?(sum) && is_card_drawable
         end.each do |card|
           sum = record[:sum] + card.value
+          counts = record[:counts].clone
+          counts[card] += 1
 
           existing_record = open_list.find { |r| r[:sum] == sum }
 
@@ -112,7 +119,7 @@ class Deck
           h_value = h.call(sum)
           f_value = g_value + h_value
 
-          new_record = { parent: record, card: card, sum: sum, f: f_value, g: g_value, h: h_value }
+          new_record = { parent: record, card: card, sum: sum, f: f_value, g: g_value, h: h_value, counts: counts }
 
           if existing_record.nil?
             open_list = open_list + [new_record]
