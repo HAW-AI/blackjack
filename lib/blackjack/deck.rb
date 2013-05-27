@@ -132,11 +132,23 @@ class Deck
 
           new_record = { parent: record, card: card, sum: sum, f: f_value, g: g_value, h: h_value, counts: counts }
 
-          if existing_record.nil?
-            open_list = open_list + [new_record]
-          elsif g_value < existing_record[:g]
-            existing_record.merge!(new_record)
+          # accept sub-optimal solutions (but be much faster)
+          if new_record[:sum] == target_value
+            path = path_from_record(new_record)
+          else
+            if existing_record.nil?
+              open_list = open_list + [new_record]
+            elsif g_value < existing_record[:g]
+              existing_record.merge!(new_record)
+            end
           end
+
+          # only accept optimal solutions (but be much slower)
+          # if existing_record.nil?
+          #   open_list = open_list + [new_record]
+          # elsif g_value < existing_record[:g]
+          #   existing_record.merge!(new_record)
+          # end
         end
       end
 
