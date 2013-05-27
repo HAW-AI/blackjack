@@ -12,20 +12,20 @@ hand << Card.new(suit: :diamonds, rank: "A")
 puts "Value of two aces: " + hand.value.to_s
 
 
-# deck = Deck.new
-# initial_value = 0
-# target_value = 18
-# cards = []
-# time = Benchmark.measure do
-#   cards = deck.draw_cards_that_beat_with_bfs(initial_value, target_value)
-# end
+deck = Deck.new
+initial_value = 0
+target_value = 18
+cards = []
+time = Benchmark.measure do
+  cards = deck.draw_cards_that_beat_with_bfs(initial_value, target_value)
+end
 
-# puts "time: " + time.to_s
-# puts "initial value: " + initial_value.to_s
-# puts "target value: " + target_value.to_s
-# puts "drawn value: " + (initial_value + cards.map(&:value).inject(0, :+)).to_s
+puts "time: " + time.to_s
+puts "initial value: " + initial_value.to_s
+puts "target value: " + target_value.to_s
+puts "drawn value: " + (initial_value + cards.map(&:value).inject(0, :+)).to_s
 
-# puts cards.map(&:to_s)
+puts cards.map(&:to_s)
 
 
 

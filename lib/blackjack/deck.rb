@@ -60,16 +60,27 @@ class Deck
   end
 
   def breadth_first_search(start_value, target_value)
-    open_list = cards.map { |c| { parent: nil, card: c, sum: start_value + c.value } }
+    card_counts = Hash[cards.group_by { |c| c }.map { |c, cs| [c, cs.length] }]
+
+    open_list = cards.map do |card|
+      counts = Hash.new(0)
+      counts[card] += 1
+      { parent: nil, card: card, sum: start_value + card.value, counts: counts }
+    end
 
     while not open_list.empty?
       new_open_list = []
 
       open_list.each do |record|
-        if record[:sum] >= target_value && record[:sum] <= 21
+        is_path_drawable = record[:counts].all? { |c, count| card_counts[c] >= count }
+        if record[:sum] >= target_value && record[:sum] <= 21 && is_path_drawable
           return path_from_record(record)
         elsif record[:sum] < 17 # only allowed to take cards while under 17
-          new_cards = cards.map { |c| { parent: record, card: c, sum: record[:sum] + c.value } }
+          new_cards = cards.map do |card|
+            counts = record[:counts].clone
+            counts[card] += 1
+            { parent: record, card: card, sum: record[:sum] + card.value, counts: counts }
+          end
           new_open_list = new_open_list + new_cards
         end
       end
