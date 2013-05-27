@@ -28,15 +28,10 @@ class GameController
 
   private
 
-  def auto_bet
-    blackjack.bet(50)
-  end
-
   def handle_pre_game_input(input_string)
     if input_string == "start"
-      if blackjack.betting
-        puts "Starting a game of blackjack."
-        blackjack.players.length.times { auto_bet }
+      if blackjack.in_game
+        # all good
       else
         puts "Cannot start a game without any players."
       end
@@ -44,13 +39,6 @@ class GameController
       username = input_string
       blackjack.add_player(username)
       puts "User '#{username}' was added to the game"
-    end
-  end
-
-  def handle_betting_input(input_string)
-    amount = input_string.to_i
-    if blackjack.bet(amount)
-      puts "#{blackjack.current_player} bets #{amount} cents"
     end
   end
 
@@ -67,8 +55,7 @@ class GameController
   def handle_end_of_round_input(input_string)
     if input_string == "n" || input_string == "new" || input_string == "new round"
       puts "Starting a new round."
-      blackjack.betting
-      auto_bet
+      blackjack.in_game
     else
       #
     end
@@ -80,9 +67,6 @@ class GameController
     if blackjack.state == :pre_game
       puts "Enter the name of the next player like 'somename' or write 'start' to start the game"
       print ">> "
-    elsif blackjack.state == :betting
-      puts "#{blackjack.current_player}, please bet an amount within your available money of #{blackjack.current_player.money} cents."
-      print user_prompt
     elsif blackjack.state == :in_game
       puts "#{blackjack.current_player}, press h for hit or s for stay."
       print user_prompt

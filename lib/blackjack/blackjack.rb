@@ -1,7 +1,7 @@
 class Blackjack
   attr_reader :table, :deck, :dealer, :players, :state
 
-  GAME_STATES = [:pre_game, :betting, :in_game, :end_of_round]
+  GAME_STATES = [:pre_game, :in_game, :end_of_round]
 
   def initialize(*args)
     @dealer       = Dealer.new
@@ -44,20 +44,6 @@ class Blackjack
     nil
   end
 
-  def bet(amount)
-    return false unless state == :betting
-
-    if current_player.bets(amount)
-      next_player
-      if all_bets_are_in?
-        in_game
-      end
-      true
-    else
-      false
-    end
-  end
-
   def current_player
     players.current
   end
@@ -66,15 +52,15 @@ class Blackjack
     players.all? {|player| player.finished? }
   end
 
-  def all_bets_are_in?
-    players.all? {|player| player.placed_a_bet? }
-  end
-
-  def betting
-    if (state == :in_game || state == :pre_game || state == :end_of_round) &&
-       players.size > 0
-      @state = :betting
+  def in_game
+    if (state == :pre_game || state == :end_of_round) && players.size > 0
+      puts "Starting a game of blackjack."
+      @state = :in_game
       new_round
+
+      players.each { |p| 2.times { p.receive_card(deck.draw_card) } }
+      puts table.to_s
+
       true
     else
       false
@@ -111,19 +97,6 @@ class Blackjack
   def pre_game
     if state == :end_of_round
       @state = :pre_game
-      true
-    else
-      false
-    end
-  end
-
-  def in_game
-    if state == :betting
-      @state = :in_game
-
-      players.each { |p| 2.times { p.receive_card(deck.draw_card) } }
-      puts table.to_s
-
       true
     else
       false
