@@ -16,11 +16,15 @@ class Deck
 
   # be smart
   def draw_cards_that_beat(start_value, target_value)
-    breadth_first_search(start_value, target_value)
+    draw_cards_that_beat_with_a_star(start_value, target_value)
   end
 
   def draw_cards_that_beat_with_a_star(start_value, target_value)
     a_star(start_value, target_value)
+  end
+
+  def draw_cards_that_beat_with_bfs(start_value, target_value)
+    breadth_first_search(start_value, target_value)
   end
 
   private
