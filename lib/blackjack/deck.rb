@@ -109,7 +109,8 @@ class Deck
 
     until open_list.empty? || !path.empty?
       record = open_list.min_by { |r| r[:f] }
-      open_list = open_list - [record]
+
+      open_list.delete_at(open_list.index(record))
       closed_list = closed_list + [record[:sum]]
 
       if record[:sum] == target_value
