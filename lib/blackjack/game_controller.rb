@@ -57,10 +57,8 @@ class GameController
   def handle_in_game_input(input_string)
     if input_string == "h" || input_string == "hit"
       blackjack.hit
-      puts round_results if blackjack.round_finished?
     elsif input_string == "s" || input_string == "stay"
       blackjack.stay
-      puts round_results if blackjack.round_finished?
     else
       #
     end
@@ -75,10 +73,6 @@ class GameController
       #
     end
 
-  end
-
-  def round_results
-    "foobar"
   end
 
   def print_instructions
