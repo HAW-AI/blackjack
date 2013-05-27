@@ -3,20 +3,15 @@ class Deck
 
   def initialize(*args)
     @cards = []
-    Card::SUITS.cycle(1) do |suit|
-      Card::RANKS.cycle(1) do |rank|
-        @cards << Card.new(suit: suit, rank: rank)
-      end
-    end
-
-    @cards.shuffle!
+    initialize_deck
   end
 
   # Returns a random card
   def draw_card
-    suit = Card::SUITS.sample
-    rank = Card::RANKS.sample
-    Card.new(suit: suit, rank: rank)
+    #suit = Card::SUITS.sample
+    #rank = Card::RANKS.sample
+    #Card.new(suit: suit, rank: rank)
+    @cards.pop
   end
 
   # be smart
@@ -28,7 +23,21 @@ class Deck
     a_star(start_value, target_value)
   end
 
-private
+  private
+
+  def initialize_deck(number_of_decks = 6)
+    number_of_decks.times { @cards << generate_a_deck }
+    @cards.flatten!
+    @cards.shuffle!
+  end
+
+  def generate_a_deck
+    Card::SUITS.cycle(1) do |suit|
+      Card::RANKS.cycle(1) do |rank|
+        @cards << Card.new(suit: suit, rank: rank)
+      end
+    end
+  end
 
   def cards
     Card::SUITS.map do |suit|
