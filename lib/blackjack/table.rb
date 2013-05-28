@@ -20,7 +20,6 @@ class Table
     result = ""
     players_and_dealer.each do |player|
       result += player.to_s
-      result += "\n"
       result += player.hand.to_s
     end
     result
