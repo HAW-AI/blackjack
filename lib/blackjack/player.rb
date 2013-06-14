@@ -1,5 +1,6 @@
 class Player
-  attr_reader :name, :id, :hand, :money, :bet, :table
+  attr_reader :name, :id, :hand, :money, :table
+  attr_accessor :bet
 
   def initialize(args)
     args.each do |k,v|

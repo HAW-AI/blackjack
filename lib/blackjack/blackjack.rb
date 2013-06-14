@@ -9,7 +9,6 @@ class Blackjack
     @players      = CircularList.new
     @state        = :pre_game
     @round        = 0
-    #@table        = Table.new
   end
 
   def add_player(username)
@@ -25,7 +24,7 @@ class Blackjack
     new_card = deck.draw_card
     current_player.receive_card(new_card)
     if round_finished?
-      end_of_round
+      raising_the_stakes
     else
       next_player
     end
@@ -39,7 +38,7 @@ class Blackjack
 
     current_player.finish
     if round_finished?
-      end_of_round
+      raising_the_stakes
     else
       next_player
     end
@@ -59,6 +58,15 @@ class Blackjack
     else
       false
     end
+  end
+
+  def accept_double_bet
+    current_player.bet = Bet.new(amount: current_player.bet.amount * 2)
+    end_of_round
+  end
+
+  def refuse_double_bet
+    end_of_round
   end
 
   def current_player
@@ -138,8 +146,17 @@ class Blackjack
     end
   end
 
+  def raising_the_stakes
+    if state == :in_game && !dealer.has_won? && dealer.hand.value >= 9 && !current_player.hand.blackjack?
+      @state = :raising_the_stakes
+      true
+    else
+      end_of_round
+    end
+  end
+
   def end_of_round
-    if state == :in_game
+    if state == :in_game || state == :raising_the_stakes
       @state = :end_of_round
       # award some money to those that won. just the dealer basically
       dealer_draws_cards unless dealer.has_won?
@@ -169,6 +186,7 @@ class Blackjack
     until dealer.hand.value >= 17
       dealer.receive_card(deck.draw_card)
     end
+    puts table.to_s
   end
 
   def print_results

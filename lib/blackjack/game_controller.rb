@@ -45,8 +45,6 @@ class GameController
     auto_bet
   end
 
-
-
   def handle_betting_input(input_string)
     amount = input_string.to_i
     if blackjack.bet(amount)
@@ -61,6 +59,16 @@ class GameController
       blackjack.stay
     else
       #
+    end
+  end
+
+  def handle_raising_the_stakes_input(input_string)
+    if input_string == "y"
+      blackjack.accept_double_bet
+    elsif input_string == "n"
+      blackjack.refuse_double_bet
+    else
+
     end
   end
 
@@ -85,6 +93,10 @@ class GameController
       print user_prompt
     elsif blackjack.state == :in_game
       puts "#{blackjack.current_player}, press h for hit or s for stay."
+      print user_prompt
+    elsif blackjack.state == :raising_the_stakes
+      puts "The dealer offers you the chance to double your bet."
+      puts "Press 'y' to accept this offer or 'n' to reject."
       print user_prompt
     elsif blackjack.state == :end_of_round
       puts "The round ended. To start a new round press n"
