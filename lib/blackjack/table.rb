@@ -1,14 +1,19 @@
 class Table
-  MINIMUM_BET = 50 #cents
-  attr_reader :players
+  attr_reader :players, :dealer, :current_minimum_bet
 
-  def initialize(*args)
+  def initialize(minimum_bet = 50)
     @dealer  = nil
     @players = []
+    @current_minimum_bet = minimum_bet
   end
 
   def players_and_dealer
     @players + [@dealer]
+  end
+
+  def raise_minimum_bet
+    @current_minimum_bet = @current_minimum_bet * 2
+    puts "The minimum bet has been raised to #{@current_minimum_bet}"
   end
 
   # returns an integer or nil if non exists

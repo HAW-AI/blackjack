@@ -11,6 +11,7 @@ class Player
     @money    ||= 5000
     @id       = SecureRandom.random_number(1000000000)
     @hand     = Hand.new
+    @stats = {won: 0, lost: 0}
   end
 
   def finish
@@ -24,20 +25,25 @@ class Player
   # returns true if money was withdrawn
   def withdraw_from_money(amount)
     amount = amount.abs
-    if amount >= Table::MINIMUM_BET && (money - amount) >= 0
+    if amount >= table.current_minimum_bet && (money - amount) >= 0
       @money = money - amount
       true
     else
-      puts "The minimum bet at this table is #{Table::MINIMUM_BET}."
+      puts "The minimum bet at this table is #{table.current_minimum_bet}."
       false
     end
   end
 
   # not really needed since the player will never win any money :)
   def add_to_money(amount)
-    puts "winner winner, chicken dinner!"
-    puts "the player #{name} just won #{amount} with the hand #{hand}"
-    puts "this should not happen"
+    puts "winner, winner, chicken dinner!"
+    amount = amount.abs
+    if amount
+      @money = money + amount
+      true
+    else
+      false
+    end
   end
 
   def receive_card(card)
@@ -46,7 +52,7 @@ class Player
   end
 
   def bets(amount)
-    if amount && amount.to_i.abs.between?(Table::MINIMUM_BET, money)
+    if amount && amount.to_i.abs.between?(table.current_minimum_bet, money)
       @bet = Bet.new(amount: amount.abs)
       withdraw_from_money(amount)
       true
@@ -55,12 +61,17 @@ class Player
     end
   end
 
+  def wins
+    add_to_money(@bet.amount * 2)
+    puts "#{name} wins #{@bet.amount * 2} cent"
+  end
+
   def dealer?
     false
   end
 
   def has_won?
-    false
+    hand.value == table.highest_non_bust_hand_value && !table.dealer.has_won?
   end
 
   def placed_a_bet?

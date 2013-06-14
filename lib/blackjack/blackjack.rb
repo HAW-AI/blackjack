@@ -1,12 +1,15 @@
 class Blackjack
-  attr_reader :table, :deck, :dealer, :players, :state
+  attr_reader :table, :deck, :dealer, :players, :state, :round
 
   GAME_STATES = [:pre_game, :betting, :in_game, :end_of_round]
+  NUMBER_OF_GAME_ROUNDS = 15
 
   def initialize(*args)
     @dealer       = Dealer.new
     @players      = CircularList.new
     @state        = :pre_game
+    @round        = 0
+    #@table        = Table.new
   end
 
   def add_player(username)
@@ -92,8 +95,13 @@ class Blackjack
   end
 
   def new_round
-    @table = Table.new
+    if @round == 0
+      @table = Table.new
+    else
+      @table = Table.new(@table.current_minimum_bet)
+    end
     @deck  = Deck.new
+    @round += 1
 
     players.reset
 
@@ -134,9 +142,21 @@ class Blackjack
     if state == :in_game
       @state = :end_of_round
       # award some money to those that won. just the dealer basically
-      dealer_draws_cards
+      dealer_draws_cards unless dealer.has_won?
+
+      if players.first.has_won?
+        players.first.wins
+      end
 
       print_results
+
+      if @round >= NUMBER_OF_GAME_ROUNDS - 1
+        puts "You played for #{NUMBER_OF_GAME_ROUNDS} rounds."
+        puts "finished game. bye."
+        exit
+      else
+        table.raise_minimum_bet if players.first.has_won?
+      end
       true
     else
       false
@@ -146,20 +166,19 @@ class Blackjack
   # At the end of a round a dealer draws cards to bet against what's
   # already on the table
   def dealer_draws_cards
-    initial_value = dealer.hand.cards.first.value
-    highest_value = table.highest_non_bust_hand_value
-    cards = deck.draw_cards_that_beat(initial_value, highest_value)
-
-    cards.each { |c| dealer.receive_card(c) }
+    until dealer.hand.value >= 17
+      dealer.receive_card(deck.draw_card)
+    end
   end
 
   def print_results
     if dealer.hand.blackjack?
-      puts "The dealer wins with a blackjack."
+      puts "The dealer wins the round with a blackjack."
     elsif dealer.has_won?
-      puts "The dealer wins with a hand value of #{dealer.hand.value}."
+      puts "The dealer wins the round with a hand value of #{dealer.hand.value}."
     else
-      puts "Some user beat the house. WTF?!"
+      puts "#{players.first.name} wins the round."
     end
+    puts "#{players.first.name} has #{players.first.money} cent left."
   end
 end

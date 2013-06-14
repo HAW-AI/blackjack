@@ -29,28 +29,28 @@ class GameController
   private
 
   def auto_bet
-    blackjack.bet(50)
+    unless blackjack.bet(blackjack.table.current_minimum_bet)
+      puts "You dont have enough money. Leave the table."
+      exit
+    end
+    #blackjack.in_game
   end
 
   def handle_pre_game_input(input_string)
-    if input_string == "start"
-      if blackjack.betting
-        puts "Starting a game of blackjack."
-        blackjack.players.length.times { auto_bet }
-      else
-        puts "Cannot start a game without any players."
-      end
-    else
-      username = input_string
-      blackjack.add_player(username)
-      puts "User '#{username}' was added to the game"
-    end
+    username = input_string
+    blackjack.add_player(username)
+    blackjack.betting
+    puts "User '#{username}' was added to the game"
+    puts "Stated a game of blackjack"
+    auto_bet
   end
+
+
 
   def handle_betting_input(input_string)
     amount = input_string.to_i
     if blackjack.bet(amount)
-      puts "#{blackjack.current_player} bets #{amount} cents"
+      puts "#{blackjack.current_player} bets #{amount} cent"
     end
   end
 
@@ -66,7 +66,7 @@ class GameController
 
   def handle_end_of_round_input(input_string)
     if input_string == "n" || input_string == "new" || input_string == "new round"
-      puts "Starting a new round."
+      puts "Starting a new round (#{blackjack.round+1})."
       blackjack.betting
       auto_bet
     else

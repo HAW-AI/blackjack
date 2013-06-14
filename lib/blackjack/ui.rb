@@ -7,6 +7,7 @@ class UI
 
   def run
     puts "Welcome to the blackjack table!"
+    puts "Extra rules of this casino: Dealer wins ties."
     puts "Enter player name"
     print ">> "
 
